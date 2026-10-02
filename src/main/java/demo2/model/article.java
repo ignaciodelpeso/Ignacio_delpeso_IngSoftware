@@ -1,13 +1,13 @@
 package demo2.model;
 
-public class Article {
+public class article {
 
     private String nombre;
     private int cantidad;
     private double precio;
     private double descuento;
 
-    public Article(String nombre, int cantidad, double precio, double descuento) {
+    public article(String nombre, int cantidad, double precio, double descuento) {
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.precio = precio;
