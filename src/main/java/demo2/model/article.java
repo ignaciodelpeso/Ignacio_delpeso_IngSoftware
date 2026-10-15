@@ -1,11 +1,16 @@
 package demo2.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class article {
 
     private String nombre;
     private int cantidad;
     private double precio;
     private double descuento;
+
+    public article() {
+    }
 
     public article(String nombre, int cantidad, double precio, double descuento) {
         this.nombre = nombre;
@@ -18,6 +23,7 @@ public class article {
         return nombre;
     }
 
+    @JsonProperty("name")
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -26,6 +32,7 @@ public class article {
         return cantidad;
     }
 
+    @JsonProperty("quantity")
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
@@ -34,6 +41,7 @@ public class article {
         return precio;
     }
 
+    @JsonProperty("unitPrice")
     public void setPrecio(double precio) {
         this.precio = precio;
     }
@@ -42,6 +50,7 @@ public class article {
         return descuento;
     }
 
+    @JsonProperty("discount")
     public void setDescuento(double descuento) {
         this.descuento = descuento;
     }

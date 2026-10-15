@@ -1,5 +1,5 @@
 package demo2.model;
-import demo2.model.article;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -7,6 +7,9 @@ public class order {
 
     private String IdPedido;
     private List<article> articulos;
+
+    public order() {
+    }
 
     public order(String IdPedido, List<article> articulos) {
         this.IdPedido = IdPedido;
@@ -17,6 +20,7 @@ public class order {
         return IdPedido;
     }
 
+    @JsonProperty("id")
     public void setId(String IdPedido) {
         this.IdPedido = IdPedido;
     }
@@ -25,6 +29,7 @@ public class order {
         return articulos;
     }
 
+    @JsonProperty("articles")
     public void setArticulos(List<article> articulos) {
         this.articulos = articulos;
     }
