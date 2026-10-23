@@ -2,7 +2,9 @@ package demo2;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import demo2.controller.OrderController;
 import demo2.model.order;
+import demo2.view.OrderView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,5 +25,9 @@ public class Main {
         for (order o : orders) {
             log.debug("Loaded order: {}", o.getId());
         }
+
+        // Initialize MVC
+        OrderView view = new OrderView();
+        new OrderController(view, orders);
     }
 }
