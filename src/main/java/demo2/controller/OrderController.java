@@ -28,7 +28,7 @@ public class OrderController {
         log.debug("Searching order: {}", id);
 
         order found = orders.stream()
-                .filter(o -> o.getId().equals(id))
+                .filter(o -> o.getId().equalsIgnoreCase(id))
                 .findFirst()
                 .orElse(null);
 

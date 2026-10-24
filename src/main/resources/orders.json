@@ -35,5 +35,12 @@
       { "name": "Apple Airpods 3", "quantity": 1, "unitPrice": 99.99, "discount": 13 },
       { "name": "Garmin Fenix 7X", "quantity": 4, "unitPrice": 829, "discount": 15 }
     ]
+  },
+  {
+    "id": "O006",
+    "articles": [
+      { "name": "Samsung Galaxy S21", "quantity": 2, "unitPrice": 799, "discount": 10 },
+      { "name": "Apple Watch Series 6", "quantity": 1, "unitPrice": 399, "discount": 5 }
+    ]
   }
 ]
