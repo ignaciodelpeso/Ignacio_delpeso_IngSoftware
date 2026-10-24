@@ -42,5 +42,12 @@
       { "name": "Samsung Galaxy S21", "quantity": 2, "unitPrice": 799, "discount": 10 },
       { "name": "Apple Watch Series 6", "quantity": 1, "unitPrice": 399, "discount": 5 }
     ]
+  },
+  {
+    "id": "O007",
+    "articles": [
+      { "name": "Sony PlayStation 5", "quantity": 1, "unitPrice": 499, "discount": 0 },
+      { "name": "Xbox Series X", "quantity": 1, "unitPrice": 499, "discount": 0 }
+    ]
   }
 ]
