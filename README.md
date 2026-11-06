@@ -1,90 +1,46 @@
-# Proyecto Java Maven - [Nombre del Proyecto]
+# Order Management (demo2)
 
-Este proyecto es una plantilla base para comenzar a trabajar con aplicaciones Java utilizando Maven. Asegúrate de seguir las instrucciones para configurar tu entorno correctamente y entender cómo contribuir al proyecto.
-
-## Tabla de Contenidos
-
-- [Introducción](#introducción)
-- [Requisitos](#requisitos)
-- [Configuración del Entorno](#configuración-del-entorno)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Compilación y Ejecución](#compilación-y-ejecución)
-- [Contribución](#contribución)
-- [Licencia](#licencia)
-
----
-
-## Introducción
-
-Este es un proyecto base para aprender sobre el uso de **Java** y **Maven**. El objetivo familiarizarse con las buenas prácticas de desarrollo y gestionar dependencias utilizando Maven.
+Aplicación de escritorio Java Swing (patrón MVC) para consultar pedidos de `orders.json`
+y ver sus totales en euros y dólares.
 
 ## Requisitos
+- Java 17+ (para ejecutar) y Maven (para compilar).
 
-Antes de comenzar, asegúrate de tener instalado lo siguiente en tu sistema:
+## Estructura
+```
+src/main/java/demo2/
+  Main.java                    arranque, carga orders.json
+  model/    article, order     datos y cálculo de importes
+  view/     OrderView          ventana Swing (icono: resources/app.png)
+  controller/OrderController   búsqueda de pedidos
+  service/  ExchangeRateService  tipo de cambio EUR/USD
+src/main/resources/            orders.json, app.png
+```
 
-- **Java 8+** (JDK) - Puedes descargarlo desde [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) o [OpenJDK](https://openjdk.java.net/)
-- **Maven** - Puedes instalar Maven siguiendo las instrucciones en su sitio oficial: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
-- **IDE recomendada:** Visual Studio Code o cualquier editor de tu preferencia con soporte para Java.
-
-## Configuración del Entorno
-
-### 1. Instalar Java
-Asegúrate de que tienes **Java 8** o una versión superior instalada. Puedes verificarlo con el siguiente comando:
-
+## Compilar y ejecutar
 ```bash
-java -version
+mvn clean package
+java -jar target/demo2-1.1.jar
 ```
+El jar generado es ejecutable (incluye dependencias y `Main-Class` vía `maven-shade-plugin`),
+por lo que también se abre con doble clic si Java 17+ está instalado.
 
-### 2. Instalar Maven
-Una vez que tengas Java instalado, puedes proceder con la instalación de Maven. Para verificar que Maven esté instalado correctamente, ejecuta el siguiente comando:
+## Tipo de cambio EUR/USD
 
-mvn -version
+El tipo de cambio varía, así que **no se guarda como constante**: se consulta a un servicio externo
+cada vez que se muestra un pedido (valor en el momento de visualización).
 
-### 3. Configurar el IDE
-Para trabajar con este proyecto, puedes usar cualquier IDE que soporte Java, como Visual Studio Code, IntelliJ IDEA, Eclipse, etc. Si estás usando Visual Studio Code, asegúrate de instalar las siguientes extensiones:
+- **Servicio:** [Frankfurter](https://frankfurter.dev) (datos del Banco Central Europeo), gratuito y sin clave de API:
+  `https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD` → `{"rates":{"USD":1.16...}}`.
+- **Implementación:** `ExchangeRateService` usa `java.net.http.HttpClient` (incluido en el JDK 17, sin dependencias nuevas)
+  y Jackson (ya usado en el proyecto) para leer `rates.USD`. Timeouts de 3-4 s.
+- **Sin bloquear la interfaz:** `OrderController` hace la llamada en un `SwingWorker` (hilo de fondo).
+- **Tolerancia a fallos:** si no hay red, hay timeout, error HTTP o JSON inesperado, se usa un valor de respaldo
+  (`FALLBACK_RATE`) y la ventana lo indica: «service unavailable, using fallback rate».
+- **Alternativas descartadas:** APIs que exigen clave (exchangerate-api, Open Exchange Rates), porque no podemos
+  publicar claves en un repositorio; y cachear el valor, porque el enunciado pide el cambio en el momento de visualización.
+- **Test:** `ExchangeRateServiceTest` prueba el parseo de la respuesta sin necesidad de red.
 
-Java Extension Pack (de Microsoft)
-Maven for Java
-
-## Estructura del proyecto
-
-```plaintext
-[NombreDelProyecto]/
-├── src/
-│   └── main/
-│       └── java/
-│           └── com/
-│               └── ejemplo/
-│                   └── App.java
-├── pom.xml
-├── target/
-└── README.md
-```
-
-## Compilación y ejecución
-
-Para compilar y ejecutar el proyecto, sigue estos pasos:
-
-Abre una terminal en la raíz del proyecto.
-
-Ejecuta el siguiente comando para compilar el proyecto:
-```bash
-mvn clean install
-```
-Para ejecutar la aplicación, usa el siguiente comando:
-```bash
-mvn exec:java
-```
-
-## Contribución
-
-Si deseas contribuir a este proyecto, por favor sigue estos pasos:
-- Haz un fork del repositorio.
-- Crea una nueva rama (git checkout -b feature-nueva-funcionalidad).
-- Realiza tus cambios y haz commit (git commit -am 'Agregué nueva funcionalidad').
-- Empuja los cambios a tu fork (git push origin feature-nueva-funcionalidad).
-- Crea un pull request.
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT - consulta el archivo LICENSE para más detalles.
+## Release
+El workflow `.github/workflows/main.yml` publica una release en GitHub (`v<versión>`) con el jar ejecutable
+cuando un push a `main` modifica `pom.xml` (cambiar `<version>` para nueva release).

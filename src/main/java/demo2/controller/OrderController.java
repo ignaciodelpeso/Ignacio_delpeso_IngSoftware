@@ -2,16 +2,19 @@ package demo2.controller;
 
 import java.util.List;
 
+import javax.swing.SwingWorker;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import demo2.model.order;
+import demo2.service.ExchangeRateService;
 import demo2.view.OrderView;
 
 public class OrderController {
 
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
-    private static final double USD_RATE = 1.162976;
+    private final ExchangeRateService rateService = new ExchangeRateService();
 
     OrderView view;
     private List<order> orders;
@@ -32,6 +35,27 @@ public class OrderController {
                 .findFirst()
                 .orElse(null);
 
-        view.displayOrder(found, USD_RATE);
+        if (found == null) {
+            view.displayOrder(null, new ExchangeRateService.Rate(ExchangeRateService.FALLBACK_RATE, false));
+            return;
+        }
+
+        // La consulta HTTP se hace fuera del hilo de Swing para no congelar la ventana.
+        new SwingWorker<ExchangeRateService.Rate, Void>() {
+            @Override
+            protected ExchangeRateService.Rate doInBackground() {
+                return rateService.getEurUsdRate();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    view.displayOrder(found, get());
+                } catch (Exception ex) {
+                    view.displayOrder(found, new ExchangeRateService.Rate(ExchangeRateService.FALLBACK_RATE, false));
+                }
+            }
+        }
+        .execute();
     }
 }
